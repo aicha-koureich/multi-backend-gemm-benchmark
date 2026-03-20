@@ -43,6 +43,7 @@ int main(){
     cout<< "\n";
     cout<< "CPU Compute time: " << duration_cpu.count()<<" s\n";
     cout<<"CPU GFLOPS: "<<GFLOPS0<<" gflops/s\n";
+    cout<< "GFLOPS Ratio (CL/CPU): " << GFLOPS1/GFLOPS0<< "x\n";
     delete[] A; 
     delete[] B; 
     delete[] C;
