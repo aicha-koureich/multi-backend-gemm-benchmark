@@ -1,0 +1,4 @@
+*.o
+cpuvsopencl
+gemmcompute
+.vscode
