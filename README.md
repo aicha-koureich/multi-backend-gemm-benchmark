@@ -14,27 +14,39 @@ It implements GEMM (General Matrix Multiplication) across multiple backends and 
 ## Backends 
 | Backend | Hardware | Status |
 |--------|----------|--------|
-| CPU | x86 | Done |
-| OpenCL | Intel UHD Graphics, GTX 1660s| Done |
+| CPU | Ryzen 5 3600, x86 | Done |
+| OpenCL | Intel UHD Graphics| Done |
 | CUDA | GTX 1660s, NVIDIA T4 | Done |
 | ROCm | — | soon |
 | SYCL | — | soon |
  
- OpenCL on NVIDIA hardware may require manual driver setup. Tested on Intel UHD Graphics. Full cross-backend comparison on a single machine in progress.
+ OpenCL on NVIDIA hardware does not work for me currently. Tested on Intel UHD Graphics. Full cross-backend comparison on a single machine under investigation.
 ## Command
 ```
 # NVIDIA GPU (CUDA + CPU)
 nvcc main.cpp cpu_backend.cpp cuda_backend.cu -o benchmarkCuda
 ```
 ```
-# No NVIDIA GPU
+# No NVIDIA GPU (OpenCL + CPU)
 g++ main.cpp cpu_backend.cpp cl_backend.cpp -o benchmarkOpencl -lOpenCL
 ```
 ## Results 
-Soon
+### CUDA vs CPU — GTX 1660 Super / Ryzen 5 3600 (above N = 2048 CPU GFLOPS are too insignificant)
+Graph
+![GFLOPS vs N](results.png)
+> Peak naive kernel efficiency (155 GFLOPS) ~2.8% of GTX 1660 Super theoretical GFLOPS (5.5 TFLOPS)
+Speedup
+| N | CUDA/CPU |
+|--------|----------|
+| 64 |~0.003x  |
+| 128 |~0.027x | 
+| 256 | ~0.22x | 
+| 512 | ~2x | 
+| 1024 | ~17x | 
+| 2048 | ~477x | 
 
+ 
 ## Next steps
 - CUDA shared memory tiling
-- CNN convolution kernel
 - SYCL backend (via Intel oneAPI)
 - ROCm backend (AMD)
