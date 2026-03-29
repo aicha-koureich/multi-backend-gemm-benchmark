@@ -1,6 +1,6 @@
 #include <iostream>
 #include "cpu_backend.hpp"
-#include "cl_backend.hpp"
+/*#include "cl_backend.hpp"*/
 #include "cuda_backend.hpp"
 #include <chrono>
 
@@ -33,16 +33,17 @@ int main(){
     cout<< "\n";
     cout<< "-----------RESULTS----------\n";
     cout<< "GPU w/cuda Compute time: " << duration_cuda.count()<<" s\n";
-    cout<<"GPU w/cuda GFLOPS: "<<GFLOPS0<<" gflops/s\n";
+    cout<<"GPU w/cuda GFLOPS: "<<GFLOPS0<<" gflops\n";
     /*OpenCL*/
-    start = steady_clock::now();
+    /*start = steady_clock::now();
     GEMM_OPENCL(A,B,C,N);
     end = steady_clock::now();
     duration_cl = end - start;
     double GFLOPS1 = (2.0*N*N*N)/(duration_cl.count()*1e9);
     cout<< "\n";
     cout<< "GPU w/opencl Compute time: " << duration_cl.count()<<" s\n";
-    cout<<"GPU w/opencl GFLOPS: "<<GFLOPS1<<" gflops/s\n";
+    cout<<"GPU w/opencl GFLOPS: "<<GFLOPS1<<" gflops\n";
+    
     /*CPU*/
     start= steady_clock::now();
     GEMM_CPU(A,B,C,N);
@@ -51,13 +52,14 @@ int main(){
     double GFLOPS2 = (2.0*N*N*N)/(duration_cpu.count()*1e9);
     cout<< "\n";
     cout<< "CPU Compute time: " << duration_cpu.count()<<" s\n";
-    cout<<"CPU GFLOPS: "<<GFLOPS2<<" gflops/s\n";
+    cout<<"CPU GFLOPS: "<<GFLOPS2<<" gflops\n";
     cout<< '\n';
     /*Comparison*/
     cout<<"GFLOPS Ratios: \n";
-    cout<< "OpenCL/CPU: "<< GFLOPS1/GFLOPS2<<"x\n";
+    /*cout<< "OpenCL/CPU: "<< GFLOPS1/GFLOPS2<<"x\n";*/
     cout<< "CUDA/CPU: "<< GFLOPS0/GFLOPS2<<"x\n";
-    cout<< "CUDA/OpenCL: "<< GFLOPS0/GFLOPS1<<"x\n";
+    /*cout<< "CUDA/OpenCL: "<< GFLOPS0/GFLOPS1<<"x\n";*/
+    
     delete[] A; 
     delete[] B; 
     delete[] C;
