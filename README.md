@@ -32,10 +32,13 @@ g++ main.cpp cpu_backend.cpp cl_backend.cpp -o benchmarkOpencl -lOpenCL
 ```
 ## Results 
 ### CUDA vs CPU — GTX 1660 Super / Ryzen 5 3600 (above N = 2048 CPU GFLOPS are too insignificant)
-Graph
+**Graph**
+
 ![GFLOPS vs N](results.png)
 > Peak naive kernel efficiency (155 GFLOPS) ~2.8% of GTX 1660 Super theoretical GFLOPS (5.5 TFLOPS)
-Speedup
+
+**Speedup**
+
 | N | CUDA/CPU |
 |--------|-----|
 | 64 |~0.003x  |
@@ -44,7 +47,6 @@ Speedup
 | 512 | ~2x | 
 | 1024 | ~17x | 
 | 2048 | ~477x | 
-
  
 ## Next steps
 - CUDA shared memory tiling
