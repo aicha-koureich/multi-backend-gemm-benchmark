@@ -37,7 +37,7 @@ Graph
 > Peak naive kernel efficiency (155 GFLOPS) ~2.8% of GTX 1660 Super theoretical GFLOPS (5.5 TFLOPS)
 Speedup
 | N | CUDA/CPU |
-|--------|----------|
+|--------|-----|
 | 64 |~0.003x  |
 | 128 |~0.027x | 
 | 256 | ~0.22x | 
