@@ -15,20 +15,19 @@ It implements GEMM (General Matrix Multiplication) across multiple backends and 
 | Backend | Hardware | Status |
 |--------|----------|--------|
 | CPU | Ryzen 5 3600, x86 | Done |
-| OpenCL | Intel UHD Graphics| Done |
+| OpenCL | Intel UHD Graphics, NVIDIA T4| Done |
 | CUDA | GTX 1660s, NVIDIA T4 | Done |
 | ROCm | — | soon |
 | SYCL | — | soon |
  
- OpenCL on NVIDIA hardware does not work for me currently. Tested on Intel UHD Graphics. Full cross-backend comparison on a single machine under investigation.
 ## Command
+The biggest challenge was getting CUDA and OpenCL to play nice in the same binary. Most of the "undefined reference" errors I ran into early on were actually just because my NVIDIA drivers were out of date.
+The Fix:
+I updated to the latest runtimes and used nvcc as the main driver.
+
 ```
-# NVIDIA GPU (CUDA + CPU)
-nvcc main.cpp cpu_backend.cpp cuda_backend.cu -o benchmarkCuda
-```
-```
-# No NVIDIA GPU (OpenCL + CPU)
-g++ main.cpp cpu_backend.cpp cl_backend.cpp -o benchmarkOpencl -lOpenCL
+# Unified Build (CUDA + OpenCL + CPU)
+nvcc -O3 main.cpp cpu_backend.cpp cuda_backend.cu cl_backend.cpp -Xcompiler -fopenmp -lOpenCL -o gemm_bench
 ```
 ## Results 
 ### CUDA vs CPU — GTX 1660 Super / Ryzen 5 3600 (above N = 2048 CPU GFLOPS are too insignificant)

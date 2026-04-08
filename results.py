@@ -1,25 +1,68 @@
 import matplotlib.pyplot as plt
+import subprocess
+import sys 
 
-N = [64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384]
+N = [64, 128, 256, 512, 1024, 2048, 4096, 8192]
 
-cpu_gflops   = [0.542256, 0.550067, 0.525797, 0.463896, 0.412675, 0.0819666, float('nan'), float('nan'), float('nan')]  
-cuda_gflops  = [0.00176468, 0.0149282, 0.116127, 0.916598, 6.97508, 39.0911, 111.698, 147.143, 155.942]  
-opencl_gflops = []
+def benchmark(x):
+    res_cpu = [] 
+    res_gpu = [] 
+    for n in N:
+        print(f"Running N= {n}")
+        cmd = subprocess.check_output([f"./benchmark", str(n), str(x)])
+        raw_output = cmd.decode("utf-8")
+        print(raw_output)
+        for line in raw_output.split('\n'):
+            if "CPU GFLOPS:" in line :
+                value = line.split(":")[1].split()[0]
+                res_cpu.append(float(value))
+            if x==0:
+                if "GPU w/cuda GFLOPS:" in line:
+                    value = line.split(":")[1].split()[0]
+                    res_gpu.append(float(value))
+            if x==1:
+                if "GPU w/opencl GFLOPS:" in line:
+                    value = line.split(":")[1].split()[0]
+                    res_gpu.append(float(value))
+    return res_gpu, res_cpu
 
-fig, ax1 = plt.subplots(1, figsize=(7, 5))
-fig.suptitle('GEMM Benchmark: GTX 1660 Super vs Ryzen 5 3600', fontsize=13)
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python3 results.py <mode: 0 for CUDA, 1 for OpenCL>")
+        sys.exit(1)
+    selected_mode = int(sys.argv[1])
+    
+    # Run the benchmark with that mode
+    # We ignore the other list returns by using "_"
+    if selected_mode == 0:
+        print("Running CUDA Benchmark")
+        res_gpu, res_cpu = benchmark(0)
+        label = "CUDA"
+    elif selected_mode == 1:
+        print("Running OpenCL Benchmark")
+        res_gpu, res_cpu = benchmark(1)
+        label = "OpenCL"
+    else:
+        print("Error: Invalid mode. Use 0 for CUDA or 1 for OpenCL.")
+        sys.exit(1)
 
-# GFLOPS plot
-ax1.plot(N, cpu_gflops,  marker='o', label='CPU (Ryzen 5 3600)')
-ax1.plot(N, cuda_gflops, marker='o', label='CUDA (GTX 1660 Super)')
-ax1.set_xlabel('Matrix size N')
-ax1.set_ylabel('GFLOPS')
-ax1.set_title('Performance vs Matrix Size')
-ax1.legend()
-ax1.grid(True)
-ax1.set_yscale('log')
-ax1.set_xscale('log')
+    fig, ax1 = plt.subplots(1, figsize=(10, 6))
+    if label == "CUDA":
+        fig.suptitle('GEMM Benchmark: Cuda (GTX 1660 Super) vs CPU (Ryzen 5 3600)', fontsize=10)
+        ax1.plot(N, res_gpu,  marker='o', label='CUDA' )
+    elif label == "OpenCL":
+        fig.suptitle('GEMM Benchmark: OpenCL (Intel UHD Graphics) vs CPU (Intel)', fontsize=10)
+        ax1.plot(N, res_gpu,  marker='o', label='OpenCL' )
 
-plt.tight_layout()
-plt.savefig('results.png', dpi=150)
-print("Saved to results.png")
+    ax1.plot(N, res_cpu, marker='o', label='CPU')
+
+    ax1.set_xlabel('Matrix size N')
+    ax1.set_ylabel('GFLOPS')
+    ax1.set_title('Performance vs Matrix Size')
+    ax1.legend()
+    ax1.grid(True)
+    ax1.set_yscale('log')
+    ax1.set_xscale('log')
+    plt.tight_layout()
+    plt.savefig('results.png', dpi=150)
+    print("Saved to results.png")

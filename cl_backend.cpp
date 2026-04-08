@@ -38,6 +38,6 @@ kernel.setArg(1, buffer_B);
 kernel.setArg(2, buffer_C);
 kernel.setArg(3, N);
 commandqueue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(N,N), cl::NullRange);
-/* Send the results to the GPU*/
+/* Send the results to the CPU*/
 commandqueue.enqueueReadBuffer(buffer_C, CL_TRUE, 0, N*N*sizeof(float), C);
 }
