@@ -27,7 +27,7 @@ I updated to the latest runtimes and used nvcc as the main driver.
 
 ```
 # Unified Build (CUDA + OpenCL + CPU)
-nvcc -O3 main.cpp cpu_backend.cpp cuda_backend.cu cl_backend.cpp -Xcompiler -fopenmp -lOpenCL -o gemm_bench
+nvcc -O3 main.cpp cpu_backend.cpp cuda_backend.cu cl_backend.cpp -Xcompiler -fopenmp -lOpenCL -o benchmark
 ```
 ## Results 
 ### CUDA vs CPU — GTX 1660 Super / Ryzen 5 3600 (above N = 2048 CPU GFLOPS are too insignificant)
