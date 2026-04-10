@@ -64,9 +64,7 @@ In contrast, the GPU scales via latency masking until N = 4096, where performanc
 *Hardware Constants GTX 1660S*:
 
 Peak Compute Ppeak = 5027 GFLOPS
-
 Peak Bandwidth Bpeak = 336 GB/s
-
 Ridge Point ​≈ 14.96 FLOP/byte
 
 This analysis compares the Naive CUDA implementation against the physical limits of the hardware.
