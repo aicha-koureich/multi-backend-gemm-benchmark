@@ -57,18 +57,16 @@ Peak Compute Ppeak = 5027 GFLOPS
 Peak Bandwidth Bpeak = 336 GB/s
 Ridge Point ​≈ 14.96 FLOP/byte
 
-Roofline Analysis:
+<u>Roofline Analysis<u>:
 
 This analysis compares the Naive CUDA implementation against the physical limits of the hardware.
 
- 
-*AIalg* = Operations/Bytes Moved = $$\2N³/(3*N²)*4 = N/6\$$
-
+$$AI_{alg} = \frac{\text{Operations}}{\text{Bytes Moved}} = \frac{2N^3}{3N^2 \times 4} = \frac{N}{6}$$
 
 ![Roofline Model cuda on GTX 1660](roofline1660scuda.png)
 
 **Regime**
-| N | AIalg (N/6) | Performance (GFLOPS) | Regime|
+| N | $AI_{alg} (N/6) | Performance (GFLOPS) | Regime|
 |---|-------------|-------------|-------|
 | 64 | 10.6 | 0.00197| Memory bound |
 | **128**| 21.3 |  0.0180 | **Compute bound** |
