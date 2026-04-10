@@ -58,7 +58,7 @@ Ridge Point ​≈ 14.96 FLOP/byte
 > Roofline Analysis
 This analysis compares the Naive CUDA implementation against the physical limits of the hardware.
 
-''' ~AIalg~ = Operations/Bytes Moved = 2N³/(3*N²)*4 = N/6'''
+''' *AIalg* = Operations/Bytes Moved = 2N³/(3*N²)*4 = N/6'''
 
 ![Roofline Model cuda on GTX 1660](roofline1660scuda.png)
 
@@ -72,8 +72,8 @@ This analysis compares the Naive CUDA implementation against the physical limits
 | 8192 | 1365.3 | 163| Compute bound|
  
  **Insight**: 
- The implementation enters the ~compute-bound~ regime at N = 128, where the algorithmic intensity (21.3 flop/byte) exceeds the hardware ridge-point (14.96 flop/byte). 
- However, the efficency at this crossover remains near zero. Despite being compute bound, the Naive CUDA implementation only achieves **3.24 %** efficiency -> **The kernel is Latency bound**. 
+ The implementation enters the *compute-bound* regime at N = 128, where the algorithmic intensity (21.3 flop/byte) exceeds the hardware ridge-point (14.96 flop/byte). 
+ However, the efficency at this crossover rssemains near zero. Despite being compute bound, the Naive CUDA implementation only achieves **3.24 %** efficiency -> **The kernel is Latency bound**. 
  
 ## Next steps
 - Shared memory tiling
