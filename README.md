@@ -52,12 +52,10 @@ In contrast, the GPU scales via latency masking until N = 4096, where performanc
 **Roofline Map**
 
 *Hardware Constants GTX 1660S*:
-
 Peak Compute Ppeak = 5027 GFLOPS
 Peak Bandwidth Bpeak = 336 GB/s
 Ridge Point ​≈ 14.96 FLOP/byte
 
-*Roofline Analysis*:
 This analysis compares the Naive CUDA implementation against the physical limits of the hardware.
 
 $$AI_{alg} = \frac{\text{Operations}}{\text{Bytes Moved}} = \frac{2N^3}{3N^2 \times 4} = \frac{N}{6}$$
