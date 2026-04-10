@@ -29,6 +29,7 @@ One challenge was getting CUDA and OpenCL to play nice in the same binary. Most 
 nvcc -O3 main.cpp cpu_backend.cpp cuda_backend.cu cl_backend.cpp -Xcompiler -fopenmp -lOpenCL -o benchmark
 ```
 **Launch**
+
 For CUDA
 ```
 python3 results.py 0
