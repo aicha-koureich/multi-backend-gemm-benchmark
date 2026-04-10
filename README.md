@@ -1,5 +1,5 @@
 # multi-backend-gemm-benchmark
-This project explores the GPU software stack from the ground up, moving from CPU baselines to multi-backend GPU compute. The goal is to gain hands-on experience with low level GPU programming and performance tuning accross different APIs.
+This project explores the GPU software stack from the ground up, moving from CPU baselines to multi-backend GPU compute. The goal is to gain hands-on experience with low level GPU programming and performance tuning across different APIs.
 
 It implements GEMM (General Matrix Multiplication) across multiple backends and profiles performance across matrix sizes. I've developed it on my GTX 1660 Super, with additional runs on Google Colab (T4) and an Intel UHD Graphics iGPU.
 
@@ -83,7 +83,7 @@ $$AI_{alg} = \frac{\text{Operations}}{\text{Bytes Moved}} = \frac{2N^3}{3N^2 \ti
  
  **Analysis**: 
  > The implementation enters the *compute-bound* regime at N = 128, where the algorithmic intensity (21.3 flop/byte) exceeds the hardware ridge-point (14.96 flop/byte). 
- However, the efficency at this crossover rssemains near zero. Despite being compute bound, the Naive CUDA implementation only achieves **3.24 %** efficiency -> **The kernel is Latency bound**. 
+ However, the efficiency at this crossover remains near zero. Despite being compute bound, the Naive CUDA implementation only achieves **3.24 %** efficiency -> **The kernel is Latency bound**. 
  
 ## Next steps
 - Shared memory tiling
