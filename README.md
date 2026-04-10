@@ -28,6 +28,15 @@ One challenge was getting CUDA and OpenCL to play nice in the same binary. Most 
 ```
 nvcc -O3 main.cpp cpu_backend.cpp cuda_backend.cu cl_backend.cpp -Xcompiler -fopenmp -lOpenCL -o benchmark
 ```
+**Launch**
+For CUDA
+```
+python3 results.py 0
+```
+For OpenCL
+```
+python3 results.py 1
+```
 ## Results 
 ### CUDA vs CPU — GTX 1660 Super / Ryzen 5 3600
 
