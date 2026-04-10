@@ -35,7 +35,7 @@ nvcc -O3 main.cpp cpu_backend.cpp cuda_backend.cu cl_backend.cpp -Xcompiler -fop
 ![GFLOPS vs N](results.png)
 
  **Analysis**: 
-At small scales (N<800), the CPU wins by avoiding the kernel launch overhead.
+> At small scales (N<800), the CPU wins by avoiding the kernel launch overhead.
 However, as the matrix size exceeds N = 512, the CPU hits the memory wall as the matrices outgrow the L3 cache capacity.
 In contrast, the GPU scales via latency masking until N = 4096, where performance begins to plateau toward a peak of 162.9 GFLOPS as the naive kernel reaches the hardware's throughput ceiling.
 
@@ -51,14 +51,13 @@ In contrast, the GPU scales via latency masking until N = 4096, where performanc
 
 **Roofline Map**
 
-<u>Hardware Constants GTX 1660S</u>:
+*Hardware Constants GTX 1660S*:
 
 Peak Compute Ppeak = 5027 GFLOPS
 Peak Bandwidth Bpeak = 336 GB/s
 Ridge Point ​≈ 14.96 FLOP/byte
 
-<u>Roofline Analysis</u>:
-
+*Roofline Analysis*:
 This analysis compares the Naive CUDA implementation against the physical limits of the hardware.
 
 $$AI_{alg} = \frac{\text{Operations}}{\text{Bytes Moved}} = \frac{2N^3}{3N^2 \times 4} = \frac{N}{6}$$
@@ -66,7 +65,7 @@ $$AI_{alg} = \frac{\text{Operations}}{\text{Bytes Moved}} = \frac{2N^3}{3N^2 \ti
 ![Roofline Model cuda on GTX 1660](roofline1660scuda.png)
 
 **Regime**
-| N | $AI_{alg} (N/6) | Performance (GFLOPS) | Regime|
+| N | $$AI_{alg} (N/6)$$ | Performance (GFLOPS) | Regime|
 |---|-------------|-------------|-------|
 | 64 | 10.6 | 0.00197| Memory bound |
 | **128**| 21.3 |  0.0180 | **Compute bound** |
@@ -74,8 +73,8 @@ $$AI_{alg} = \frac{\text{Operations}}{\text{Bytes Moved}} = \frac{2N^3}{3N^2 \ti
 | 2048 | 341.3 | 44.7 | Compute bound |
 | 8192 | 1365.3 | 163| Compute bound|
  
- **Insight**: 
- The implementation enters the *compute-bound* regime at N = 128, where the algorithmic intensity (21.3 flop/byte) exceeds the hardware ridge-point (14.96 flop/byte). 
+ **Analysis**: 
+ > The implementation enters the *compute-bound* regime at N = 128, where the algorithmic intensity (21.3 flop/byte) exceeds the hardware ridge-point (14.96 flop/byte). 
  However, the efficency at this crossover rssemains near zero. Despite being compute bound, the Naive CUDA implementation only achieves **3.24 %** efficiency -> **The kernel is Latency bound**. 
  
 ## Next steps
