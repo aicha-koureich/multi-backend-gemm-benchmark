@@ -5,24 +5,22 @@ It implements GEMM (General Matrix Multiplication) across multiple backends and 
 
 ## Architecture
 ```
-. ├──main.cpp 
+. ├──main.cpp             # Unified benchmark with accuracy verification
 ├── cpu_backend.cpp       # OpenMP CPU implementation
 ├── cl_backend.cpp        # OpenCL host + kernel loading
 │   └── kernel_gemm.cl    # OpenCL C kernel
-└── cuda_backend.cu       # CUDA kernel + host code
-└── results.py            # Automation, parsing, plotting
+└── cuda_backend.cu       # CUDA kernel _Tiled Shared Memory implementation_ + host code
+└── results.py            # Automation, visualisation
 ```
 ## Backends 
 | Backend | Hardware | Status |
 |--------|----------|--------|
 | CPU | Ryzen 5 3600, x86 | Done |
 | OpenCL | Intel UHD Graphics, NVIDIA T4| Done |
-| CUDA | GTX 1660s, NVIDIA T4 | Done |
-| ROCm | — | soon |
-| SYCL | — | soon |
+| CUDA | GTX 1660s, NVIDIA T4 | Done and first optimisation |
  
 ## Command
-One challenge was getting CUDA and OpenCL to play nice in the same binary. Most of the "undefined reference" errors I ran into early on were actually just because my NVIDIA drivers were out of date.
+One challenge was getting CUDA and OpenCL to play nice in the same binary. It works on linux environment but OpenCL struggles on Windows (even via WSL). 
 
 **Unified Build (CUDA + OpenCL + CPU)**
 ```
@@ -37,6 +35,10 @@ python3 results.py 0
 For OpenCL
 ```
 python3 results.py 1
+```
+For CUDA vs OpenCL (vs CPU if CPU part is uncommented in main.cpp, Warning: 1h+ compute time for the CPU)
+```
+python3 results.py 2
 ```
 ## Results 
 ### CUDA vs CPU — GTX 1660 Super / Ryzen 5 3600
