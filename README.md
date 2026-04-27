@@ -111,7 +111,7 @@ Peak efficiency(N=8192): CUDA 6.0% | OpenCL 19.4%
 | 8192 | 0.30x |
 
 ## Accuracy
-All results are cross-checked against the CPU reference with max_error < 10^-1. My implementation consistently stayed below 10−5 error margin.
+All results are cross-checked against the CPU reference with max_error < **$10^{-1}$**. My implementation consistently stayed below **$10^{-5}$** error margin.
 
 ## Next steps
 To refocus the project I decided to not do the ROCM and SYCL backends and to instead improve the CUDA and OpenCL ones.
