@@ -10,7 +10,7 @@ __global__ void kernel(float* d_A, float* d_B,float* d_C, int N){
         for(int k=0; k < N; k++){
            sum+= d_A[i*N+k]*d_B[k*N+j];
         }
-    d_C[i*N+j] = sum
+    d_C[i*N+j] = sum;
     }
 }
 void GEMM_CUDA(float* A, float* B, float* C, int N){
