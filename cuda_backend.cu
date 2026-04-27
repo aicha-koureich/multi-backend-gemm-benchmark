@@ -3,15 +3,15 @@
 
 /*Computation*/
 __global__ void kernel(float* d_A, float* d_B,float* d_C, int N){
-int j = blockIdx.x * blockDim.x + threadIdx.x;
-int i = blockIdx.y * blockDim.y + threadIdx.y;
-if( i < N && j < N){
-    float sum= 0.0f;
-    for(int k=0; k < N; k++){
-       sum+= d_A[i*N+k]*d_B[k*N+j];
-}
-d_C[i*N+j] = sum
-}
+    int j = blockIdx.x * blockDim.x + threadIdx.x;
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
+    if( i < N && j < N){
+        float sum= 0.0f;
+        for(int k=0; k < N; k++){
+           sum+= d_A[i*N+k]*d_B[k*N+j];
+        }
+    d_C[i*N+j] = sum
+    }
 }
 void GEMM_CUDA(float* A, float* B, float* C, int N){
 /*Device*/
