@@ -1,7 +1,7 @@
 # multi-backend-gemm-benchmark
 This project explores the GPU software stack from the ground up, moving from CPU baselines to multi-backend GPU compute. The goal is to gain hands-on experience with low level GPU programming and performance tuning across different APIs.
 
-It implements GEMM (General Matrix Multiplication) across multiple backends and profiles performance across matrix sizes. I've developed it on my GTX 1660 Super, with additional runs on Google Colab (T4) and an Intel UHD Graphics iGPU.
+It implements GEMM (General Matrix Multiplication) across multiple backends and profiles performance across matrix sizes. I've first developed it on my GTX 1660 Super, then switched to Google Colab (T4).
 
 ## Architecture
 ```
@@ -42,8 +42,11 @@ python3 results.py 2
 ```
 ## Phase 1: Naive Results on Local Baseline 
 ### CUDA vs CPU — GTX 1660 Super / Ryzen 5 3600
+
 I started the project by comparing a naive CUDA kernel against a highly-threaded CPU on local hardware.
+
 **Scalability**
+
 ![GFLOPS vs N](results.png)
 
  **Analysis**: 
@@ -61,6 +64,7 @@ In contrast, the GPU scales until N = 4096, where performance begins to plateau 
 | 8192 | 232.76x |
 
 **Roofline Map**
+
 GTX 1660s Ridge Point ​≈ 14.96 FLOP/byte
 
 This analysis compares the Naive CUDA implementation against the physical limits of the hardware.
@@ -75,20 +79,29 @@ $$AI_{alg} = \frac{N}{6}$$
 
 ## Phase 2: CUDA Optimisation
 ### Shared Memory Tiling
-I could not continue working on my GTX 1660 super anymore, since WSL struggles with OpenCL. To overcome this issue I'm using **Google Colab's Tesla T4** from now. 
+Due to driver interoperability limitations between OpenCL and WSL on my local setup, I transitioned the benchmarking and optimization phase to Google Colab's Tesla T4 to ensure a consistent environment across all backends. 
 I implemented Shared Memory Tiling on the CUDA backend with 16 x 16 tiles to reuse data locally within the GPU's fast Shared Memory.
 
-|| Naive T4 | Tiled T4 | Speedup|:
+| | Naive T4 | Tiled T4 | Speedup|
+|----|-------|-----------|---------|
 |N =8192| 178 GFLOPS | 483 GFLOPS | **2.71x** |
 
-## Phase 3: CUDA vs OpenCL (NVIDIA Tesla T4 - Google Colab)
+## Phase 3: First optimised Results
+### CUDA vs OpenCL (NVIDIA Tesla T4 - Google Colab)
+
 Finally, I compared my manual CUDA optimization against a highly-tuned OpenCL backend.
+
 **Scalability**
+
+![GFLOPS/CUDAvsOpenCL](1stCUDAvOpenCL.png)
 
 T4 peak performance = 8.1 TFLOPS
 Peak efficiency(N=8192): CUDA 6.0% | OpenCL 19.4%
+
 **Analysis**: 
+
  > While the CUDA Tiled implementation is efficient at medium scales, OpenCL shows a massive performance lead at N=8192. The reasons need to be explored in the next steps.
+
 **Speedup**
 | N | CUDA/OpenCL |
 |--------|-----|
