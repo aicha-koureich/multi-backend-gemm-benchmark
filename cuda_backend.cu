@@ -6,13 +6,11 @@ __global__ void kernel(float* d_A, float* d_B,float* d_C, int N){
 int j = blockIdx.x * blockDim.x + threadIdx.x;
 int i = blockIdx.y * blockDim.y + threadIdx.y;
 if( i < N && j < N){
-
-    int k=0;
-    d_C[i*N+j]= 0.0;
-    while(k<N){
-        d_C[i*N+j]+= d_A[i*N+k]*d_B[k*N+j];
-        k+=1;
+    float sum= 0.0f;
+    for(int k=0; k < N; k++){
+       sum+= d_A[i*N+k]*d_B[k*N+j];
 }
+d_C[i*N+j] = sum
 }
 }
 void GEMM_CUDA(float* A, float* B, float* C, int N){
