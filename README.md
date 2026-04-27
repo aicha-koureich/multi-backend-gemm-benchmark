@@ -17,7 +17,7 @@ It implements GEMM (General Matrix Multiplication) across multiple backends and 
 |--------|----------|--------|
 | CPU | Ryzen 5 3600, x86 | Done |
 | OpenCL | Intel UHD Graphics, NVIDIA T4| Done |
-| CUDA | GTX 1660s, NVIDIA T4 | Done and first optimisation |
+| CUDA | GTX 1660s, NVIDIA T4 | Done + first optimisation |
  
 ## Command
 One challenge was getting CUDA and OpenCL to play nice in the same binary. It works on linux environment but OpenCL struggles on Windows (even via WSL). 
@@ -40,57 +40,67 @@ For CUDA vs OpenCL (vs CPU if CPU part is uncommented in main.cpp, Warning: 1h+ 
 ```
 python3 results.py 2
 ```
-## Results 
+## Phase 1: Naive Results on Local Baseline 
 ### CUDA vs CPU — GTX 1660 Super / Ryzen 5 3600
-
+I started the project by comparing a naive CUDA kernel against a highly-threaded CPU on local hardware.
 **Scalability**
 ![GFLOPS vs N](results.png)
 
  **Analysis**: 
-> At small scales (N<800), the CPU wins by avoiding the kernel launch overhead.
+> At small scales (N<800), the CPU wins by avoiding the kernel launch overhead and PCIe transfer.
 However, as the matrix size exceeds N = 512, the CPU hits the memory wall as the matrices outgrow the L3 cache capacity.
-In contrast, the GPU scales via latency masking until N = 4096, where performance begins to plateau toward a peak of 162.9 GFLOPS as the naive kernel reaches the hardware's throughput ceiling.
+In contrast, the GPU scales until N = 4096, where performance begins to plateau toward a peak of 162.9 GFLOPS.
 
 **Speedup**
 
 | N | CUDA/CPU |
 |--------|-----|
 | 64 | 0.04x |
-| 512 | 0.22x | 
 | 1024 | 3.56x | 
 | 2048 | 39.24x | 
 | 8192 | 232.76x |
 
 **Roofline Map**
-
-*Hardware Constants GTX 1660S*:
-
-Peak Compute Ppeak = 5027 GFLOPS
-
-Peak Bandwidth Bpeak = 336 GB/s
-
-Ridge Point ​≈ 14.96 FLOP/byte
+GTX 1660s Ridge Point ​≈ 14.96 FLOP/byte
 
 This analysis compares the Naive CUDA implementation against the physical limits of the hardware.
 
-$$AI_{alg} = \frac{\text{Operations}}{\text{Bytes Moved}} = \frac{2N^3}{3N^2 \times 4} = \frac{N}{6}$$
+$$AI_{alg} = \frac{N}{6}$$
 
 ![Roofline Model cuda on GTX 1660](roofline1660scuda.png)
-
-**Regime**
-| N | $$AI_{alg} (N/6)$$ | Performance (GFLOPS) | Regime|
-|---|-------------|-------------|-------|
-| 64 | 10.6 | 0.00197| Memory bound |
-| **128**| 21.3 |  0.0180 | **Compute bound** |
-| 1024 | 170.7 | 8.65 | Compute bound |
-| 2048 | 341.3 | 44.7 | Compute bound |
-| 8192 | 1365.3 | 163| Compute bound|
  
  **Analysis**: 
  > The implementation enters the *compute-bound* regime at N = 128, where the algorithmic intensity (21.3 flop/byte) exceeds the hardware ridge-point (14.96 flop/byte). 
- However, the efficiency at this crossover remains near zero. Despite being compute bound, the Naive CUDA implementation only achieves **3.24 %** efficiency -> **The kernel is Latency bound**. 
- 
+ However, the efficiency at this crossover remains near zero. Despite being compute bound, the Naive CUDA implementation only achieves **3.24 %** efficiency -> **The kernel is Latency bound**.
+
+## Phase 2: CUDA Optimisation
+### Shared Memory Tiling
+I could not continue working on my GTX 1660 super anymore, since WSL struggles with OpenCL. To overcome this issue I'm using **Google Colab's Tesla T4** from now. 
+I implemented Shared Memory Tiling on the CUDA backend with 16 x 16 tiles to reuse data locally within the GPU's fast Shared Memory.
+
+|| Naive T4 | Tiled T4 | Speedup|:
+|N =8192| 178 GFLOPS | 483 GFLOPS | **2.71x** |
+
+## Phase 3: CUDA vs OpenCL (NVIDIA Tesla T4 - Google Colab)
+Finally, I compared my manual CUDA optimization against a highly-tuned OpenCL backend.
+**Scalability**
+
+T4 peak performance = 8.1 TFLOPS
+Peak efficiency(N=8192): CUDA 6.0% | OpenCL 19.4%
+**Analysis**: 
+ > While the CUDA Tiled implementation is efficient at medium scales, OpenCL shows a massive performance lead at N=8192. The reasons need to be explored in the next steps.
+**Speedup**
+| N | CUDA/OpenCL |
+|--------|-----|
+| 64 | 0.84x |
+| 1024 | 1.61x | 
+| 4096 | 1.13x | 
+| 8192 | 0.30x |
+
+## Accuracy
+All results are cross-checked against the CPU reference with max_error < 10^-1. My implementation consistently stayed below 10−5 error margin.
+
 ## Next steps
-- Shared memory tiling
-- SYCL backend
-- ROCm backend (AMD)
+To refocus the project I decided to not do the ROCM and SYCL backend and to instead improve this one.
+- Tiling of 32 x 32
+- Register Tiling
