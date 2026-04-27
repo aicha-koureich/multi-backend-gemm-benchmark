@@ -4,10 +4,28 @@
 #include "cuda_backend.hpp"
 #include <chrono>
 #include <omp.h>
+#include <cmath>
+#include <cstdlib>
 
 using std::cout;
 using std::cin;
 using namespace std::chrono;
+void accuracy(float* C, float* C_ref, int N){
+    double err_max = 0.0;
+    for (int i = 0; i < N * N; i++) {
+        double err = std::abs( C[i] - C_ref[i]);
+        if (err > err_max) { 
+            err_max = err;
+        }
+    }
+    if (err_max < 1e-1) { 
+        cout << "Accurate calculations, error max = " << err_max <<"\n";
+    } else {
+        cout << "Inaccurate calculations, error max = " << err_max << "\n";
+    }
+
+}
+
 int main(int argc, char** argv){
     if (argc<3){ //We need N and the mode, either OpencCL or CUDA for
         cout<<"N and/or mode required, <mode: 0=cuda, 1=OpenCL>\n";
@@ -19,10 +37,11 @@ int main(int argc, char** argv){
     float *A = new float[N*N];
     float *B = new float[N*N];
     float *C = new float[N*N];
+    float *C_ref = new float[N*N]; //To verify our GPU results with CPU values
     for(int i=0; i<N; i++){
         for(int j=0; j< N; j++){
-            A[i*N+j] = rand();
-            B[i*N+j] = rand();
+            A[i*N+j] = (float)rand() / RAND_MAX;
+            B[i*N+j] =(float)rand() / RAND_MAX;
         }
     
     } 
@@ -49,19 +68,25 @@ int main(int argc, char** argv){
         cout<<"GPU w/opencl GFLOPS: "<<GFLOPS1<<" gflops\n";  
     }
     /*CPU*/
-    /*start= steady_clock::now();
-    GEMM_CPU(A,B,C,N);
+    start= steady_clock::now();
+    GEMM_CPU(A,B,C_ref,N);
     end= steady_clock::now();
     duration_cpu = end-start;
     double GFLOPS2 = (2.0*N*N*N)/(duration_cpu.count()*1e9);
     cout<< "\n";
     cout<< "CPU Compute time: " << duration_cpu.count()<<" s\n";
     cout<<"CPU GFLOPS: "<<GFLOPS2<<" gflops\n";
-    cout<< '\n';*/
+    cout<< '\n';
     
+    /* Accuracy verification*/
+    accuracy(C, C_ref, N);
+
     delete[] A; 
     delete[] B; 
     delete[] C;
+    delete[] C_ref;
+
     return 0;
+    
     
 }
