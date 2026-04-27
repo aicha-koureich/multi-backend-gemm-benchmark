@@ -49,7 +49,7 @@ int main(int argc, char** argv){
         cout<<"GPU w/opencl GFLOPS: "<<GFLOPS1<<" gflops\n";  
     }
     /*CPU*/
-    start= steady_clock::now();
+    /*start= steady_clock::now();
     GEMM_CPU(A,B,C,N);
     end= steady_clock::now();
     duration_cpu = end-start;
@@ -57,7 +57,7 @@ int main(int argc, char** argv){
     cout<< "\n";
     cout<< "CPU Compute time: " << duration_cpu.count()<<" s\n";
     cout<<"CPU GFLOPS: "<<GFLOPS2<<" gflops\n";
-    cout<< '\n';
+    cout<< '\n';*/
     
     delete[] A; 
     delete[] B; 
