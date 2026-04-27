@@ -114,6 +114,6 @@ Peak efficiency(N=8192): CUDA 6.0% | OpenCL 19.4%
 All results are cross-checked against the CPU reference with max_error < 10^-1. My implementation consistently stayed below 10−5 error margin.
 
 ## Next steps
-To refocus the project I decided to not do the ROCM and SYCL backend and to instead improve this one.
+To refocus the project I decided to not do the ROCM and SYCL backends and to instead improve the CUDA and OpenCL ones.
 - Tiling of 32 x 32
 - Register Tiling
