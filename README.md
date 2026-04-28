@@ -117,3 +117,4 @@ All results are cross-checked against the CPU reference with max_error < **$10^{
 To refocus the project I decided to not do the ROCM and SYCL backends and to instead improve the CUDA and OpenCL ones.
 - Tiling of 32 x 32
 - Register Tiling
+- Implementing streams in cuda
